@@ -1,160 +1,205 @@
-# Disease Prediction System
+# Faculty Availability Indicator
 
-An intelligent, machine learning-driven web application that predicts diseases based on user-reported symptoms. Offers transparent model explanations and medication suggestions, making it suitable for rapid prototyping, academic research, and real-world deployments via Streamlit.
+A QR-enabled real-time faculty availability indicator that leverages binary status encoding to inform students of a teacher's readiness for in-person interaction, thereby preempting unproductive visits and minimizing on-campus inefficiencies.
 
----
+## 🚀 Features
 
-## 🚀 Key Features
+### Core Functionality
+- **Real-time Status Updates**: WebSocket-powered live status changes
+- **Binary Status Encoding**: Efficient 3-bit status representation (000-110)
+- **QR Code Generation**: Unique QR codes for each faculty member
+- **Mobile-Responsive Design**: Optimized for all devices
+- **Secure Authentication**: JWT-based faculty login system
 
-* 🤖 **Symptom-Based Disease Prediction**
-  Leverages user-input symptoms to predict likely diseases.
+### Status System
+The system uses a 3-bit binary encoding for efficient status representation:
 
-* 🧠 **Ensemble of Machine Learning Models**
-  Combines Random Forest, Support Vector Machine (SVM), and Naive Bayes classifiers for robust predictions.
+| Status | Binary | Description |
+|--------|--------|-------------|
+| Unavailable | 000 | Completely unavailable |
+| Available | 001 | Available for meetings |
+| Busy | 010 | Busy - Do not disturb |
+| In Meeting | 011 | Currently in a meeting |
+| Office Hours | 100 | Official office hours |
+| Away | 101 | Away from office |
+| Online Only | 110 | Available online only |
 
-* 📝 **NLP-Driven Symptom Matching**
-  Utilizes natural language processing techniques to ensure resilient and context-aware symptom interpretation.
+### User Interfaces
+- **Public Faculty List**: Browse all faculty with real-time status
+- **Individual Faculty Pages**: Detailed status with QR codes
+- **Faculty Dashboard**: Status management interface
+- **Authentication System**: Secure login/registration
 
-* 📊 **Model Evaluation & Performance Metrics**
-  Built-in utilities for validating accuracy, precision, recall, and confusion matrices.
+## 🛠 Technology Stack
 
-* 💊 **Treatment Recommendations**
-  Provides basic prescription suggestions aligned with the predicted condition.
+### Backend
+- **Node.js** with Express.js
+- **SQLite** database
+- **Socket.IO** for real-time updates
+- **JWT** authentication
+- **QR Code** generation
+- **bcrypt** password hashing
 
-* 📈 **Interactive Jupyter Notebook**
-  Includes a preconfigured notebook for exploratory analysis and demonstration.
+### Frontend
+- **React** with modern hooks
+- **Tailwind CSS** for styling
+- **React Router** for navigation
+- **Socket.IO Client** for real-time updates
+- **Axios** for API calls
+- **React QR Code** for QR display
 
-* 🖼️ **Modern UI with Streamlit**
-  Intuitive, responsive user interface for seamless interaction.
+## 📦 Installation
 
----
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-## 🌳 Project Directory Overview
+### Setup Instructions
 
-```text
-Ai-Driven-Healthcare-Webapp/
-│
-├── .gitignore            # Version control exclusions
-├── LICENSE               # MIT License declaration
-├── pyproject.toml        # Optional: project configuration for build tools
-├── README.md             # Project documentation (this file)
-├── requirements.txt      # Python package dependencies
-│
-├── assets/               # Icons, logos, and static media
-│   └── generated-icon.png
-│
-├── data/                 # Training and testing datasets
-│   ├── Training.csv
-│   └── Testing.csv
-│
-├── models/               # Serialized machine learning models
-│   ├── nb_model.pkl
-│   ├── rf_model.pkl
-│   └── svm_model.pkl
-│
-├── notebooks/            # Jupyter notebooks for analysis and demo
-│   └── disease_pred.ipynb
-│
-├── scripts/              # Scripts for training and evaluating models
-│   ├── train_models.py
-│   └── evaluate_model.py
-│
-└── src/                  # Source code for application logic
-    ├── app.py                # Main entry point (Streamlit app)
-    ├── disease_pred.py       # CLI/chatbot interface and logic
-    ├── model.py              # ML pipeline and DiseasePredictor class
-    ├── nlp_processor.py      # NLP utilities for parsing symptoms
-    ├── prescriptions.py      # Prescription mappings for diagnoses
-    └── symptoms.py           # Loads and manages symptom vocabulary
-```
-
----
-
-## ⚙️ Environment Setup
-
-1. **Clone the Repository**
-
+1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd Ai-Driven-Healthcare-Webapp
+   cd faculty-availability-indicator
    ```
 
-2. **Create and Activate a Virtual Environment**
-
+2. **Install backend dependencies**
    ```bash
-   python -m venv venv
-   # Windows
-   venv\Scripts\activate
-   # macOS/Linux
-   source venv/bin/activate
+   npm install
    ```
 
-3. **Install Required Packages**
-
+3. **Install frontend dependencies**
    ```bash
-   pip install -r requirements.txt
+   cd client
+   npm install
+   cd ..
    ```
 
----
+4. **Configure environment variables**
+   ```bash
+   # Copy and modify .env file
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-## 🖥️ Running the Application
+5. **Start the development servers**
+   ```bash
+   # Start both backend and frontend
+   npm run dev:full
+   
+   # Or start them separately:
+   # Backend only
+   npm run dev
+   
+   # Frontend only (in another terminal)
+   cd client && npm start
+   ```
 
-### 🌐 Launch the Streamlit Web Interface
+6. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
 
-```bash
-streamlit run app.py
+## 🏗 Project Structure
+
+```
+faculty-availability-indicator/
+├── server.js                 # Main server file
+├── package.json              # Backend dependencies
+├── .env                      # Environment variables
+├── faculty_availability.db   # SQLite database (auto-created)
+├── client/                   # React frontend
+│   ├── src/
+│   │   ├── components/       # Reusable components
+│   │   ├── pages/           # Page components
+│   │   ├── utils/           # Utility functions and contexts
+│   │   └── App.js           # Main app component
+│   ├── public/              # Static files
+│   └── package.json         # Frontend dependencies
+└── README.md                # This file
 ```
 
-* Access the application via the local URL shown in the terminal.
-* Interact via the chat-like interface by entering your symptoms to receive diagnosis and treatment suggestions.
+## 🔧 API Endpoints
 
-### 🧪 Retrain Models (Optional)
+### Public Endpoints
+- `GET /api/faculty` - Get all faculty with current status
+- `GET /api/faculty/:id` - Get specific faculty member
+- `GET /api/qr/:id` - Generate QR code for faculty member
+- `GET /api/status-codes` - Get available status codes
 
+### Authentication Endpoints
+- `POST /api/faculty/register` - Register new faculty member
+- `POST /api/faculty/login` - Faculty login
+
+### Protected Endpoints
+- `POST /api/faculty/:id/status` - Update faculty status (requires auth)
+
+## 💡 Usage Guide
+
+### For Students
+1. **Browse Faculty**: Visit the main page to see all faculty members
+2. **Check Status**: View real-time availability status with color coding
+3. **Scan QR Codes**: Use mobile device to scan QR codes for quick access
+4. **Filter & Search**: Use filters to find specific faculty or departments
+
+### For Faculty
+1. **Register**: Create an account with your university credentials
+2. **Login**: Access your personal dashboard
+3. **Update Status**: Use quick buttons or custom form to set availability
+4. **Share QR Code**: Display your QR code for students to scan
+5. **Real-time Updates**: Status changes are immediately visible to students
+
+## 🔒 Security Features
+
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: bcrypt for secure password storage
+- **Rate Limiting**: API rate limiting to prevent abuse
+- **Input Validation**: Server-side validation for all inputs
+- **CORS Protection**: Configured CORS for secure cross-origin requests
+
+## 🚀 Deployment
+
+### Production Build
 ```bash
-python scripts/train_models.py
+# Build the frontend
+npm run build
+
+# Start production server
+npm start
 ```
 
-* Rebuilds all ML models using `Training.csv` and updates the `.pkl` files.
-
-### 📊 Evaluate Model Performance (Optional)
-
-```bash
-python scripts/evaluate_model.py
+### Environment Variables for Production
+```env
+PORT=5000
+JWT_SECRET=your-production-jwt-secret
+CLIENT_URL=https://your-domain.com
+NODE_ENV=production
 ```
 
-* Displays accuracy and confusion matrices for the current set of models.
+## 🤝 Contributing
 
-### 📓 Open the Jupyter Notebook (Optional)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-```bash
-jupyter notebook notebooks/disease_pred.ipynb
-```
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For support, email support@university.edu or create an issue in the repository.
+
+## 🎯 Future Enhancements
+
+- [ ] Email notifications for status changes
+- [ ] Calendar integration for automatic status updates
+- [ ] Mobile app for iOS and Android
+- [ ] Analytics dashboard for administrators
+- [ ] Integration with university directory systems
+- [ ] Bulk status updates for holidays/breaks
+- [ ] Student feedback system
 
 ---
 
-## 🤝 Contributing Guidelines
-
-We welcome contributions! To contribute:
-
-* Fork this repository and create a new branch for your feature or fix.
-* Ensure your code is well-documented with docstrings and inline comments.
-* Add or update tests where applicable.
-* Submit a pull request with a clear, concise description of changes.
-
----
-
-## 🙋 Author
-
-Developed by **@pradumya2005**
-
-[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat\&logo=github\&logoColor=white)](https://github.com/pradumya2005)
-  
-[![Email](https://img.shields.io/badge/-Email-D14836?style=flat\&logo=gmail\&logoColor=white)](mailto:salunkepradumya@gmail.com)
-  
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat\&logo=linkedin\&logoColor=white)](https://www.linkedin.com/in/pradumya-salunke-7582b428a)
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See the `LICENSE` file for full details.
+**Faculty Availability Indicator** - Making campus interactions more efficient through technology.
